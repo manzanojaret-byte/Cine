@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="auto">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archivo del Cine Clásico Universal</title>
+   
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@6.0.0-alpha.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.2/font/bootstrap-icons.min.css" />
+    <style>
+        :root { --bg:#0e0e11; --panel:#18181d; --panel2:#202027; --line:#34343d; --text:#e9e6df; --muted:#9a9aa5; --accent:#e0a526; --red:#c1121f; }
+        html { scroll-behavior: smooth; }
+        section[id] { scroll-margin-top: 90px; }
+        body { background: var(--bg) !important; color: var(--text) !important; }
+        header { position: sticky; top: 0; z-index: 1030; }
+        .navbar { background: #08080a !important; border-bottom: 1px solid var(--line); }
+        .navbar, .navbar a, .navbar .navbar-brand { color: var(--text) !important; }
+        .navbar .fg-primary { color: var(--accent) !important; }
+        .navbar .form-control { background: var(--panel2); border-color: var(--line); color: var(--text); }
+        .navbar .form-control::placeholder { color: var(--muted); }
+        .navbar .btn-outline { border-color: var(--accent); color: var(--accent); }
+        .navbar .btn-outline:hover { background: var(--accent); color: #111; }
+        dialog.drawer { background: #08080a; color: var(--text); }
+        #hero { background: linear-gradient(180deg, #17171d, var(--bg)) !important; color: var(--text) !important; }
+        #hero .badge { background: var(--red) !important; color: #fff !important; }
+        #hero .text-light { color: #d8d5cd !important; }
+        #hero .fg-secondary { color: var(--muted) !important; }
+        .border-secondary { border-color: var(--line) !important; }
+        h2 { border-left: 4px solid var(--accent); padding-left: .75rem; }
+        .card { background: var(--panel) !important; color: var(--text) !important; border: 1px solid var(--line) !important;
+                border-radius: .6rem !important; transition: transform .15s, border-color .15s; }
+        .card:hover { transform: translateY(-3px); border-color: var(--accent) !important; }
+        .card-img { width: 100%; aspect-ratio: 2/3; object-fit: cover; border-radius: .4rem; }
+        .card .fg-primary { color: #7fb4ff !important; }
+        .card .fg-warning, .fg-warning { color: var(--accent) !important; font-weight: 600; }
+        .card .fg-secondary, .small.fg-secondary { color: var(--muted) !important; }
+        .card h3.badge { background: transparent !important; color: var(--text) !important; border: 0 !important; padding: 0 !important;
+                text-align: left; white-space: normal; font-weight: 700; }
+        .card button.btn-outline, .card-footer .btn-outline { border-color: var(--accent) !important; color: var(--accent) !important; background: transparent; }
+        .card button.btn-outline:hover { background: var(--accent) !important; color: #111 !important; }
+        .card-footer { background: transparent !important; border-top: 1px solid var(--line) !important; }
+        .card-footer span.btn-outline { border-color: var(--line) !important; color: var(--muted) !important; }
+        .movie-card.featured { box-shadow: 0 0 0 2px var(--accent); }
+        .poster { aspect-ratio: 2 / 3; border-radius: .5rem; width: 100%; }
+        .poster-casablanca { background: linear-gradient(160deg, #3a3a3a, #111 70%); }
+        .poster-metropolis { background: linear-gradient(160deg, #b8860b, #1c1c2e 75%); }
+        .poster-kane       { background: linear-gradient(160deg, #6c757d, #0d0d0d 75%); }
+        .poster-2001       { background: linear-gradient(160deg, #c1121f, #050510 75%); }
+        .poster-singin     { background: linear-gradient(160deg, #f4a300, #3b1f6e 80%); }
+        .poster-godfather  { background: linear-gradient(160deg, #7a1f1f, #000 75%); }
+        footer { background: #08080a; color: var(--text); }
+        footer .fg-secondary { color: var(--muted) !important; }
+        dialog.ficha { background: var(--panel); color: var(--text); border: 1px solid var(--accent); border-radius: .6rem;
+                       max-width: min(640px, 92vw); width: 100%; padding: 1.5rem; }
+        dialog.ficha::backdrop { background: rgba(0,0,0,.75); }
+        dialog.ficha .ficha-img { width: 100%; max-width: 170px; aspect-ratio: 2/3; object-fit: cover; border-radius: .4rem; }
+        dialog.ficha .btn-close { filter: invert(1); }
+        dialog.ficha .fg-secondary { color: var(--muted) !important; }
+        dialog.ficha button.btn-outline { border-color: var(--accent) !important; color: var(--accent) !important; background: transparent; }
+        dialog.ficha button.btn-outline:hover { background: var(--accent) !important; color: #111 !important; }
+        dialog.ficha button { cursor: pointer; }
+        .no-results { display: none; }
+    </style>
+</head>
+<body class="bg-dark text-light">
+
+    <header>
+      <nav class="navbar lg:navbar-expand shadow-sm py-3" data-bs-theme="light">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-lg" href="#">
+                CineClásico
+                <span class="fg-primary">.db</span>
+            </a>
+
+            <button
+                class="navbar-toggler btn-icon"
+                type="button"
+                data-bs-toggle="drawer"
+                data-bs-target="#navbarDrawer"
+                aria-controls="navbarDrawer"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+            >
+                <span class="navbar-toggler-icon" aria-hidden="true"></span>
+            </button>
+
+            <dialog class="drawer drawer-end" tabindex="-1" id="navbarDrawer" aria-labelledby="navbarDrawerLabel">
+                <div class="drawer-header">
+                    <h5 class="drawer-title" id="navbarDrawerLabel">Menu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="drawer" aria-label="Close"></button>
+                </div>
+
+            <div class="drawer-body">
+                <ul class="navbar-nav me-auto" id="mainMenu">
+                    <li class="nav-item"><a class="nav-link active" href="#hero">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#catalog">Catálogo</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#featured">Destacadas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#about">Historia</a></li>
+                </ul>
+            </div>
+            </dialog>
+
+            <form class="hstack gap-2" role="search" id="searchForm">
+                <input
+                    class="form-control"
+                    type="search" id="searchInput"
+                    placeholder="Buscar película…"
+                    aria-label="Buscar"
+                />
+                <button class="btn-solid btn-icon theme-secondary" type="submit" aria-label="Buscar">
+                
+                    <i class="bi bi-search"></i>
+                </button>
+            </form>
+
+            <button type="button" class="theme-primary btn-outline" id="btnColeccion">
+                Mi Colección <span id="colCount">(0)</span>
+            </button>
+        </div>
+      </nav>
+    </header>
+
+    
+    <section
+        id="hero"
+        class="bg-dark fg-light py-5 mb-5 border-bottom border-secondary"
+    >
+        <div class="container text-center py-4">
+            <div class="row justify-content-center">
+                <div class="lg:col-8">
+                    <span class="badge bg-primary text-uppercase px-5 py-3 mb-3 rounded-pill">Archivo Histórico Cinematográfico</span>
+                    <h1 class="fs-2xl fw-bold mb-3">
+                        Grandes Obras Maestras del Séptimo Arte
+                    </h1>
+                    <p class="lead text-light mb-3">
+                        Una travesía visual por los filmes que definieron el lenguaje
+                        narrativo, la dirección de arte y la banda sonora de la historia
+                        del cine.
+                    </p>
+                    <p class="fg-secondary small mb-4">
+                        Desde el expresionismo mudo de los años 20 hasta la revolución del
+                        color y la ciencia ficción de culto. Explora fichas técnicas,
+                        géneros y calificaciones verificadas.
+                    </p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="#catalog" class="btn btn-primary btn-lg px-4">Explorar Catálogo</a>
+                        <a href="#about" class="btn btn-outline-light btn-lg px-4">Saber Más</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main class="container py-5">
+        <section class="row p-4 g-4">
+            <div class="lg:col-10">
+                <h2 class="fs-2xl fw-bold">Catálogo Principal de Películas</h2>
+                <p class="lead">Fichas de obras restauradas en alta definición</p>
+            </div>
+
+            <article class="card p-4 md:col-6 my-4 lg:col-4 d-flex justify-content-between movie-card" data-year="1942" data-rating="9.2">
+                <div class="p-4">
+                    <div>Clásico Imperdible</div>
+                     <img src="https://en.wikipedia.org/wiki/Special:FilePath/CasablancaPoster-Gold.jpg?width=500" loading="lazy" referrerpolicy="no-referrer" class="card-img" alt="Póster de Casablanca" data-poster="casablanca" />
+                </div>
+
+                <div class="my-2 d-flex justify-content-between">
+                    <span class="fg-primary">Drama / Romance</span>
+                    <span class="fg-warning">★ 9.2</span>
+                </div>
+
+                <h3 class="badge theme-success badge-outline fs-xl">Casablanca</h3>
+                <p class="movie-director">Dirigida por <strong>Michael Curtiz</strong> (1942)</p>
+                <p class="movie-synopsis">
+                            En el Marruecos de la Segunda Guerra Mundial, el propietario de un club nocturno debe decidir si ayuda a su antiguo amor y a su esposo a ponerse a salvo.
+                </p>
+
+                <div class="card-footer d-flex justify-content-between">
+                    <span class="px-5 py-2 border border-2 btn-outline">102 min</span>
+                    <button type="button" class="theme-primary btn-outline rounded-pill btn-ficha">
+                        Ver Ficha
+                    </button>
+                </div>
+            </article>
+           
+            <article class="card p-4 md:col-6 my-4 lg:col-4 d-flex justify-content-between movie-card" data-year="1927" data-rating="8.3">
+                <div class="p-4">
+                    <div>Expresionismo Mudo</div>
+                    <img src="https://en.wikipedia.org/wiki/Special:FilePath/Metropolis_%28German_three-sheet_poster%29.jpg?width=500" loading="lazy" referrerpolicy="no-referrer" class="card-img" alt="Póster de Metrópolis" data-poster="metropolis" />
+                    
+                </div>
+
+                <div class="my-2 d-flex justify-content-between">
+                    <span class="fg-primary">Sci-Fi / Silente</span>
+                    <span class="fg-warning">★ 8.3</span>
+                </div>
+
+                <h3 class="badge theme-success badge-outline fs-xl">Metrópolis</h3>
+                <p class="small fg-secondary mb-1">Dirigida por <strong>Fritz Lang</strong> (1927)</p>
+                <p class="small mb-3">En un futuro distópico dividido entre pensadores y trabajadores, el hijo del gobernante de la ciudad se enamora de una líder de la clase trabajadora.</p>
+
+                <div class="card-footer d-flex justify-content-between">
+                    <span class="px-5 py-2 border border-2 btn-outline">153 min</span>
+                    <button type="button" class="theme-primary btn-outline rounded-pill btn-ficha">
+                        Ver Ficha
+                    </button>
+                </div>
+            </article>
+
+            <article class="card p-4 md:col-6 my-4 lg:col-4 d-flex justify-content-between movie-card" data-year="1941" data-rating="8.9">
+                <div class="p-4">
+                    <div>Innovación Técnica</div>
+                    <img src="https://en.wikipedia.org/wiki/Special:FilePath/Citizen_Kane_poster%2C_1941_%28Style_B%2C_unrestored%29.jpg?width=500" loading="lazy" referrerpolicy="no-referrer" class="card-img" alt="Póster de Ciudadano Kane" data-poster="kane" />
+                    
+                </div>
+
+                <div class="my-2 d-flex justify-content-between">
+                    <span class="fg-primary">Drama / Misterio</span>
+                    <span class="fg-warning">★ 8.9</span>
+                </div>
+
+                <h3 class="badge theme-success badge-outline fs-xl">Ciudadano Kane</h3>
+                <p class="small fg-secondary mb-1">Dirigida por <strong>Orson Welles</strong> (1941)</p>
+                <p class="small mb-3">Tras la muerte de un poderoso magnate de los medios de comunicación, un grupo de periodistas intenta descifrar el significado de sus últimas palabras: «Rosebud».</p>
+
+                <div class="card-footer d-flex justify-content-between">
+                    <span class="px-5 py-2 border border-2 btn-outline">119 min</span>
+                    <button type="button" class="theme-primary btn-outline rounded-pill btn-ficha">
+                        Ver Ficha
+                    </button>
+                </div>
+            </article>
+
+            <article class="card p-4 md:col-6 my-4 lg:col-4 d-flex justify-content-between movie-card featured" data-year="1968" data-rating="9.0">
+                <div class="p-4">
+                    <div>Cine de Culto</div>
+                    <img src="https://en.wikipedia.org/wiki/Special:FilePath/2001_A_Space_Odyssey_%281968%29.png?width=500" loading="lazy" referrerpolicy="no-referrer" class="card-img" alt="Póster de 2001: Odisea del Espacio" data-poster="2001" />
+                   
+                </div>
+
+                <div class="my-2 d-flex justify-content-between">
+                    <span class="fg-primary">Sci-Fi / Filosófico</span>
+                    <span class="fg-warning">★ 9.0</span>
+                </div>
+
+                <h3 class="badge theme-success badge-outline fs-xl">2001: Odisea del Espacio</h3>
+                <p class="small fg-secondary mb-1">Dirigida por <strong>Stanley Kubrick</strong> (1968)</p>
+                <p class="small mb-3">Una enigmática estructura influye en la evolución humana antes de que una nave espacial sea enviada a Júpiter bajo el control de la inteligencia artificial HAL 9000.</p>
+
+                <div class="card-footer d-flex justify-content-between">
+                    <span class="px-5 py-2 border border-2 btn-outline">149 min</span>
+                    <button type="button" class="theme-primary btn-outline rounded-pill btn-ficha">
+                        Ver Ficha
+                    </button>
+                </div>
+            </article>
+
+            <article class="card p-4 md:col-6 my-4 lg:col-4 d-flex justify-content-between movie-card" data-year="1952" data-rating="8.3">
+                <div class="p-4">
+                    <div>Era Dorada</div>
+                    <img src="https://en.wikipedia.org/wiki/Special:FilePath/Singin%27_in_the_Rain_%281952_poster%29.jpg?width=500" loading="lazy" referrerpolicy="no-referrer" class="card-img" alt="Póster de Cantar bajo la lluvia" data-poster="singin" />
+                    
+                </div>
+
+                <div class="my-2 d-flex justify-content-between">
+                    <span class="fg-primary">Musical / Comedia</span>
+                    <span class="fg-warning">★ 8.3</span>
+                </div>
+
+                <h3 class="badge theme-success badge-outline fs-xl">Cantar bajo la lluvia</h3>
+                <p class="small fg-secondary mb-1">Dirigida por <strong>Gene Kelly &amp; Stanley Donen</strong> (1952)</p>
+                <p class="small mb-3">Una compañía de producción cinematográfica y sus estrellas hacen la difícil transición del cine mudo al sonoro en Hollywood a finales de los años 20.</p>
+
+                <div class="card-footer d-flex justify-content-between">
+                    <span class="px-5 py-2 border border-2 btn-outline">103 min</span>
+                    <button type="button" class="theme-primary btn-outline rounded-pill btn-ficha">
+                        Ver Ficha
+                    </button>
+                </div>
+            </article>
+
+            <article class="card p-4 md:col-6 my-4 lg:col-4 d-flex justify-content-between movie-card featured" data-year="1972" data-rating="9.2">
+                <div class="p-4">
+                    <div>Obra Cumbre</div>
+                    <img src="https://en.wikipedia.org/wiki/Special:FilePath/Godfather_ver1.jpg?width=500" loading="lazy" referrerpolicy="no-referrer" class="card-img" alt="Póster de El Padrino" data-poster="godfather" />
+                    
+                </div>
+
+                <div class="my-2 d-flex justify-content-between">
+                    <span class="fg-primary">Policial / Drama</span>
+                    <span class="fg-warning">★ 9.2</span>
+                </div>
+
+                <h3 class="badge theme-success badge-outline fs-xl">El Padrino</h3>
+                <p class="small fg-secondary mb-1">Dirigida por <strong>Francis Ford Coppola</strong> (1972)</p>
+                <p class="small mb-3">El envejecido patriarca de una dinastía familiar transfiere el control de su organización a su reacio hijo menor.</p>
+
+                <div class="card-footer d-flex justify-content-between">
+                    <span class="px-5 py-2 border border-2 btn-outline">175 min</span>
+                    <button type="button" class="theme-primary btn-outline rounded-pill btn-ficha">
+                        Ver Ficha
+                    </button>
+                </div>
+            </article>
+
+        </section>
+        <p class="text-center fg-secondary no-results py-5" id="noResults">No se encontraron películas con esa búsqueda.</p>
+    </main>
+
+
+    <section id="featured" class="container py-5 border-top border-secondary">
+        <h2 class="fs-2xl fw-bold">Películas Destacadas</h2>
+        <p class="lead mb-4">Las dos obras mejor valoradas del archivo</p>
+        <div class="row g-4">
+            <article class="card p-4 md:col-6 d-flex">
+                <div class="poster poster-godfather mb-3" style="max-width:160px">
+                    <img src="https://en.wikipedia.org/wiki/Special:FilePath/Godfather_ver1.jpg?width=500" loading="lazy" referrerpolicy="no-referrer" class="card-img" alt="Póster de El Padrino" data-poster="godfather" />
+                </div>
+                <span class="fg-warning">★ 9.2 · Obra Cumbre</span>
+                <h3 class="fs-xl fw-bold my-2">El Padrino <small class="fg-secondary">(1972)</small></h3>
+                <p class="small">Francis Ford Coppola retrata el traspaso de poder dentro de una familia mafiosa. 175 min.</p>
+                <button type="button" class="theme-primary btn-outline rounded-pill align-self-start btn-ficha">Ver Ficha</button>
+            </article>
+            <article class="card p-4 md:col-6 d-flex">
+                <div class="poster poster-2001 mb-3" style="max-width:160px">
+                    <img src="https://en.wikipedia.org/wiki/Special:FilePath/2001_A_Space_Odyssey_%281968%29.png?width=500" loading="lazy" referrerpolicy="no-referrer" class="card-img" alt="Póster de 2001: Odisea del Espacio" data-poster="2001" />
+                </div>
+                <span class="fg-warning">★ 9.0 · Cine de Culto</span>
+                <h3 class="fs-xl fw-bold my-2">2001: Odisea del Espacio <small class="fg-secondary">(1968)</small></h3>
+                <p class="small">Stanley Kubrick une evolución humana e inteligencia artificial en un viaje a Júpiter. 149 min.</p>
+                <button type="button" class="theme-primary btn-outline rounded-pill align-self-start btn-ficha">Ver Ficha</button>
+            </article>
+        </div>
+    </section>
+
+
+    <section id="about" class="container py-5 border-top border-secondary">
+        <div class="row g-4">
+            <div class="lg:col-6">
+                <h2 class="fs-2xl fw-bold">Historia del Archivo</h2>
+                <p class="lead">Un recorrido por las etapas que dieron forma al cine clásico.</p>
+                <p>
+                    CineClásico.db reúne fichas técnicas de películas que marcaron la
+                    historia del cine, con director, año, género, duración y calificación.
+                </p>
+            </div>
+            <div class="lg:col-6">
+                <ul class="list-unstyled">
+                    <li class="mb-3"><strong class="fg-primary">Años 20 · Cine mudo.</strong> El expresionismo de <em>Metrópolis</em> (1927) define la estética visual.</li>
+                    <li class="mb-3"><strong class="fg-primary">Años 40 · Innovación narrativa.</strong> <em>Ciudadano Kane</em> (1941) renueva la técnica y la estructura del relato.</li>
+                    <li class="mb-3"><strong class="fg-primary">Años 50 · Era dorada.</strong> <em>Cantar bajo la lluvia</em> (1952) celebra el paso al cine sonoro.</li>
+                    <li class="mb-3"><strong class="fg-primary">Años 60 y 70 · Cine de autor.</strong> <em>2001</em> (1968) y <em>El Padrino</em> (1972) elevan el género.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+
+    <footer class="py-4 border-top border-secondary text-center">
+        <div class="container">
+            <p class="mb-1 fw-bold">CineClásico<span class="fg-primary">.db</span></p>
+            <p class="small fg-secondary mb-0">Archivo del Cine Clásico Universal · 2026</p>
+        </div>
+    </footer>
+
+    <dialog class="ficha" id="fichaDialog" aria-labelledby="fichaTitle">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+            <h3 class="fs-xl fw-bold m-0" id="fichaTitle"></h3>
+            <button type="button" class="btn-close" id="fichaClose" aria-label="Cerrar"></button>
+        </div>
+        <div class="d-flex gap-3 flex-wrap">
+            <img class="ficha-img" id="fichaImg" alt="">
+            <div class="flex-grow-1" style="min-width:200px">
+                <p class="fg-warning mb-1" id="fichaRating"></p>
+                <p class="mb-1" id="fichaGenre"></p>
+                <p class="mb-2 small" id="fichaMeta"></p>
+                <p id="fichaSyn"></p>
+                <button type="button" class="theme-primary btn-outline rounded-pill" id="fichaFav"></button>
+            </div>
+        </div>
+    </dialog>
+
+    <dialog class="ficha" id="colDialog" aria-labelledby="colTitle">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+            <h3 class="fs-xl fw-bold m-0" id="colTitle">Mi Colección</h3>
+            <button type="button" class="btn-close" id="colClose" aria-label="Cerrar"></button>
+        </div>
+        <div id="colBody"></div>
+    </dialog>
+
+    <script type="module">
+        import { Drawer } from "https://cdn.jsdelivr.net/npm/bootstrap@6.0.0-alpha.1/dist/js/bootstrap.bundle.min.js";
+
+        const $ = (s, r = document) => r.querySelector(s);
+
+        /* ---------- Datos leídos de las tarjetas del catálogo ---------- */
+        const cards = [...document.querySelectorAll("main .movie-card")];
+        const films = cards.map(c => {
+            const img = $("img", c);
+            const directorLine = $("p:not(.movie-synopsis)", c);
+            return {
+                el: c,
+                title: $("h3", c).textContent.trim(),
+                genre: $("span.fg-primary", c).textContent.trim(),
+                rating: $("span.fg-warning", c).textContent.trim(),
+                tag: $("div > div", c).textContent.trim(),
+                director: directorLine ? directorLine.textContent.trim() : "",
+                synopsis: $("p:last-of-type", c).textContent.trim(),
+                time: $(".card-footer span", c).textContent.trim(),
+                img: img.getAttribute("src"),
+                poster: img.dataset.poster
+            };
+        });
+        const byTitle = t => films.find(f => f.title === t.trim());
+
+        /* ---------- Si falta una imagen, se muestra un póster de color ---------- */
+        document.querySelectorAll("img[data-poster]").forEach(img => {
+            const swap = () => {
+                const d = document.createElement("div");
+                d.className = "poster poster-" + img.dataset.poster;
+                d.setAttribute("role", "img"); d.setAttribute("aria-label", img.alt);
+                img.replaceWith(d);
+            };
+            img.addEventListener("error", swap);
+            if (img.complete && img.naturalWidth === 0) swap();
+        });
+        document.querySelectorAll("#featured img.card-img").forEach(img => {
+            img.addEventListener("error", () => img.style.display = "none");
+        });
+
+        /* ---------- Menú hamburguesa: se cierra solo y baja a la sección ---------- */
+        const drawer = $("#navbarDrawer");
+        const goTo = id => { const t = $(id); if (t) t.scrollIntoView({ behavior: "smooth" }); };
+        function closeMenu(after) {
+            if (!drawer.open) { after && after(); return; }
+            if (after) drawer.addEventListener("close", after, { once: true });
+            Drawer.getOrCreateInstance(drawer).hide();
+        }
+        $("#mainMenu").addEventListener("click", e => {
+            const a = e.target.closest("a.nav-link"); if (!a) return;
+            e.preventDefault();
+            document.querySelectorAll("#mainMenu .nav-link").forEach(l => l.classList.toggle("active", l === a));
+            closeMenu(() => goTo(a.getAttribute("href")));
+        });
+        $(".navbar-brand").addEventListener("click", e => { e.preventDefault(); goTo("#hero"); });
+
+        /* ---------- Búsqueda ---------- */
+        const input = $("#searchInput");
+        function filter() {
+            const q = input.value.trim().toLowerCase();
+            let shown = 0;
+            films.forEach(f => {
+                const ok = (f.title + " " + f.genre + " " + f.director + " " + f.synopsis).toLowerCase().includes(q);
+                f.el.style.display = ok ? "" : "none";
+                if (ok) shown++;
+            });
+            $("#noResults").style.display = shown ? "none" : "block";
+        }
+        input.addEventListener("input", filter);
+        $("#searchForm").addEventListener("submit", e => {
+            e.preventDefault(); filter();
+            closeMenu(() => goTo("#catalog"));
+        });
+
+        /* ---------- Mi Colección (se guarda en el navegador) ---------- */
+        let col = [];
+        try { col = JSON.parse(localStorage.getItem("cc_coleccion") || "[]"); } catch (_) {}
+        const save = () => { try { localStorage.setItem("cc_coleccion", JSON.stringify(col)); } catch (_) {} };
+        const inCol = t => col.includes(t);
+        function renderCol() {
+            $("#colCount").textContent = "(" + col.length + ")";
+            const items = films.filter(f => inCol(f.title));
+            $("#colBody").innerHTML = items.length
+                ? '<ul class="list-unstyled m-0">' + items.map(f =>
+                    '<li class="d-flex justify-content-between align-items-center py-2 border-bottom border-secondary">' +
+                    '<span><strong>' + f.title + '</strong><br><small class="fg-secondary">' + f.genre + '</small></span>' +
+                    '<button type="button" class="theme-primary btn-outline rounded-pill" data-quitar="' + f.title + '">Quitar</button></li>').join("") + "</ul>"
+                : '<p class="m-0">Aún no has guardado películas. Abre una ficha y pulsa «Guardar en mi colección».</p>';
+        }
+        function toggle(t) {
+            col = inCol(t) ? col.filter(x => x !== t) : [...col, t];
+            save(); renderCol(); updateFichaBtn();
+        }
+
+        /* ---------- Fichas ---------- */
+        const ficha = $("#fichaDialog"), colDlg = $("#colDialog");
+        let current = null;
+        function updateFichaBtn() {
+            if (!current) return;
+            $("#fichaFav").textContent = inCol(current.title) ? "Quitar de mi colección" : "Guardar en mi colección";
+        }
+        function openFicha(f) {
+            current = f;
+            $("#fichaTitle").textContent = f.title;
+            const img = $("#fichaImg"); img.src = f.img; img.alt = "Póster de " + f.title;
+            img.onerror = () => { img.style.visibility = "hidden"; };
+            img.style.visibility = "visible";
+            $("#fichaRating").textContent = f.rating + " · " + f.tag;
+            $("#fichaGenre").textContent = f.genre;
+            $("#fichaMeta").textContent = f.director + " · " + f.time;
+            $("#fichaSyn").textContent = f.synopsis;
+            updateFichaBtn();
+            ficha.showModal();
+        }
+        document.addEventListener("click", e => {
+            const b = e.target.closest(".btn-ficha");
+            if (b) {
+                const art = b.closest("article");
+                const title = art.matches(".movie-card") ? $("h3", art).textContent : $("h3", art).childNodes[0].textContent;
+                const f = byTitle(title); if (f) openFicha(f);
+                return;
+            }
+            const q = e.target.closest("[data-quitar]");
+            if (q) toggle(q.dataset.quitar);
+        });
+        $("#fichaFav").addEventListener("click", () => current && toggle(current.title));
+        $("#fichaClose").addEventListener("click", () => ficha.close());
+        $("#colClose").addEventListener("click", () => colDlg.close());
+        // clic en el fondo oscuro cierra el diálogo
+        [ficha, colDlg].forEach(d => d.addEventListener("click", e => { if (e.target === d) d.close(); }));
+        $("#btnColeccion").addEventListener("click", () => closeMenu(() => { renderCol(); colDlg.showModal(); }));
+
+        renderCol();
+    </script>
+</body>
+</html>
